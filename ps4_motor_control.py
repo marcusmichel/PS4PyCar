@@ -6,6 +6,11 @@ from pyPS4Controller.controller import Controller
 Motor1A = 24
 Motor1B = 23
 Motor1E = 25
+dc_max = 12
+dc_min = 2
+dc_mid = 7
+max_left = -32767.0
+max_right = 32767.0
 pin = 12
  
 GPIO.setmode(GPIO.BCM)
@@ -96,13 +101,15 @@ class MyController(Controller):
         
     def on_L3_left(self, value):
         print("Left! {}".format(value))
-        print(int(-5/32767.0 * value + 7))
-        p.ChangeDutyCycle(int(5/-32767.0 * value + 7))
+        dc = (dc_max - dc_mid)/max_left * value + dc_mid
+        print(round(dc,1))
+        p.ChangeDutyCycle(round(dc,1))
         
     def on_L3_right(self, value):
         print("Right! {}".format(value))
-        print(int(-5/32767.0 * value + 7))
-        p.ChangeDutyCycle(int(-5/32767.0 * value + 7))
+        dc = (dc_min - dc_mid)/max_right * value + dc_mid
+        print(round(dc,1))
+        p.ChangeDutyCycle(round(dc,1))
         
     def on_L3_at_rest(self):
         print("Resting")
